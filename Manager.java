@@ -1,7 +1,5 @@
 package sample;
 
-
-
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;

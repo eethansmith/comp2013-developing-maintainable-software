@@ -1,13 +1,10 @@
 package sample;
 
-
-
 import javafx.animation.AnimationTimer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.util.Random;
-
 
 public class Gho extends Rectangle implements Runnable {
 
@@ -30,18 +27,6 @@ public class Gho extends Rectangle implements Runnable {
         this.createAnimation();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     private String getRandomDirection(String exclude1, String exclude2) {
         String[] directions = {"left", "right", "up", "down"};
         int rnd = new Random().nextInt(directions.length);
@@ -50,10 +35,6 @@ public class Gho extends Rectangle implements Runnable {
         }
         return directions[rnd];
     }
-
-
-
-
 
     private boolean getRandomBoolean() {
         Random rand = new Random();
