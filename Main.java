@@ -1,7 +1,5 @@
 package sample;
 
-
-
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -23,21 +21,6 @@ public class Main extends Application {
         Canvas canvas = new Canvas( 1225, 600 );
         root.getChildren().add( canvas );
         Manager manager = new Manager(root);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         manager.drawMaze();
 

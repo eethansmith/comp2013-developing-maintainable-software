@@ -1,7 +1,5 @@
 package sample;
 
-
-
 import javafx.scene.Group;
 
 import java.util.HashSet;
