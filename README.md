@@ -1,12 +1,12 @@
 # COMP2013_ReAssessment
 
+## PacMan Game
 
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+This coursework is about maintaining and extending a re-implementation of a classic retro
+game called Pacman. The new implementation has never been completed, but at least it runs, once it is
+set up properly. More information about original Pacman game and the history of it is available on
+[Wikipedia](https://en.wikipedia.org/wiki/Pac-Man). In addition, you will find many opportunities on the
+internet to play the game [online](https://www.google.com/logos/2010/pacman10-i.html).
 
 ## Add your files
 
