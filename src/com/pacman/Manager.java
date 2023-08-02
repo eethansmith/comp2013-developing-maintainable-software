@@ -22,7 +22,7 @@ public class Manager {
     private AnimationTimer upPacmanAnimation;
     private AnimationTimer downPacmanAnimation;
     private Maze maze;
-    private int lifes;
+    private int lives;
     private int score;
     private Score scoreBoard;
     private boolean gameEnded;
@@ -38,7 +38,7 @@ public class Manager {
         this.rightPacmanAnimation = this.createAnimation("right");
         this.upPacmanAnimation = this.createAnimation("up");
         this.downPacmanAnimation = this.createAnimation("down");
-        this.lifes = 3;
+        this.lives = 3;
         this.score = 0;
         this.cookiesEaten = 0;
     }
@@ -53,11 +53,11 @@ public class Manager {
         }
         this.pacman.setCenterX(2.5 * Obstacle.THICKNESS);
         this.pacman.setCenterY(2.5 * Obstacle.THICKNESS);
-        lifes--;
+        lives--;
         score -= 10;
-        this.scoreBoard.lifes.setText("Lifes: " + this.lifes);
+        this.scoreBoard.lives.setText("Lives: " + this.lives);
         this.scoreBoard.score.setText("Score: " + this.score);
-        if (lifes == 0) {
+        if (lives == 0) {
             this.gameOver();
         }
     }
@@ -74,7 +74,7 @@ public class Manager {
         endGame.setFont(Font.font("Arial", 40));
         endGame.setFill(Color.ROYALBLUE);
         root.getChildren().remove(this.scoreBoard.score);
-        root.getChildren().remove(this.scoreBoard.lifes);
+        root.getChildren().remove(this.scoreBoard.lives);
         root.getChildren().add(endGame);
     }
 
@@ -86,7 +86,7 @@ public class Manager {
             this.drawMaze();
             this.pacman.setCenterX(2.5 * Obstacle.THICKNESS);
             this.pacman.setCenterY(2.5 * Obstacle.THICKNESS);
-            this.lifes = 3;
+            this.lives = 3;
             this.score = 0;
             this.cookiesEaten = 0;
             gameEnded = false;
