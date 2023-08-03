@@ -7,31 +7,48 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
+/**
+ * Main class for the PACMAN GAME
+ * here the program sets up the game's UI and handles user interaction.
+ */
 public class Main extends Application {
 
+    /**
+     * Entry point of the JavaFX application.
+     * Sets up the scene, game manager, and key event handlers.
+     *
+     * @param stage the primary stage for this application, onto which
+     *              the application scene can be set
+     * @throws Exception if any error occurs
+     */
+
     @Override
-    public void start(Stage st) throws Exception{
-//        Parent root = FXMLLoader.load(getClass().getResource("pacman.fxml"));
-        st.setTitle( "PacmanV7" );
+    public void start(Stage stage) throws Exception{
+        stage.setTitle( "PACMAN - The Arcade Game" );
 
         Group root = new Group();
-        Scene sc = new Scene( root );
-        st.setScene( sc );
+        Scene scene = new Scene( root );
+        stage.setScene( scene );
 
         Canvas canvas = new Canvas( 1225, 600 );
         root.getChildren().add( canvas );
-        Manager manager = new Manager(root);
 
-        manager.drawMaze();
+        Manager gameManager = new Manager(root);
+        gameManager.drawMaze();
 
-        sc.addEventHandler(KeyEvent.KEY_PRESSED, event -> manager.movePacman(event));
-        sc.addEventHandler(KeyEvent.KEY_RELEASED, event -> manager.stopPacman(event));
-        sc.addEventHandler(KeyEvent.KEY_PRESSED, event -> manager.restartGame(event));
+        // Assign event handlers for key presses and releases
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, gameManager::movePacman);
+        scene.addEventHandler(KeyEvent.KEY_RELEASED, gameManager::stopPacman);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, gameManager::restartGame);
 
-        st.show();
+        stage.show();
     }
 
-
+    /**
+     * Main method that launches the JavaFX application.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
