@@ -6,10 +6,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.shape.Rectangle;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 
 public class Manager {
 
@@ -55,8 +57,8 @@ public class Manager {
         this.pacman.setCenterY(2.5 * Obstacle.THICKNESS);
         lives--;
         score -= 10;
-        this.scoreBoard.lives.setText("Lives: " + this.lives);
-        this.scoreBoard.score.setText("Score: " + this.score);
+        this.scoreBoard.lives.setText("LIVES: " + this.lives);
+        this.scoreBoard.score.setText("SCORE: " + this.score);
         if (lives == 0) {
             this.gameOver();
         }
@@ -94,6 +96,11 @@ public class Manager {
     }
 
     public void drawMaze() {
+        // Create a black rectangle to serve as the background
+        Rectangle background = new Rectangle(0, 0,1225, 600);
+        background.setFill(Color.BLACK);
+
+        root.getChildren().add(background);
         this.maze.CreateMaze(root);
         // 1st line
         Integer skip[] = {5, 17};
@@ -201,10 +208,11 @@ public class Manager {
     }
 
     public void generateGhosts() {
-        this.ghosts.add(new Ghost(18.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.DEEPPINK, maze, this));
-        this.ghosts.add(new Ghost(22.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.GREENYELLOW, maze, this));
-        this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.BLACK, maze, this));
-        this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 9.5 * Obstacle.THICKNESS, Color.SPRINGGREEN, maze, this));
+        this.ghosts.add(new Ghost(18.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.CADETBLUE, maze, this));
+        this.ghosts.add(new Ghost(22.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.GREEN, maze, this));
+        this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.HOTPINK, maze, this));
+        this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 9.5 * Obstacle.THICKNESS, Color.PURPLE, maze, this));
+        this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 9.5 * Obstacle.THICKNESS, Color.RED, maze, this));
     }
 
     public void movePacman(KeyEvent event) {
@@ -254,28 +262,28 @@ public class Manager {
                 case "left":
                     if (!maze.isTouching(pacman.getCenterX() - pacman.getRadius(), pacman.getCenterY(), 15)) {
                         pacman.setCenterX(pacman.getCenterX() - step);
-                        checkCokieCoalition(pacman, "x");
+                        checkCookieCoalition(pacman, "x");
                         checkGhostCoalition();
                     }
                     break;
                 case "right":
                     if (!maze.isTouching(pacman.getCenterX() + pacman.getRadius(), pacman.getCenterY(), 15)) {
                         pacman.setCenterX(pacman.getCenterX() + step);
-                        checkCokieCoalition(pacman, "x");
+                        checkCookieCoalition(pacman, "x");
                         checkGhostCoalition();
                     }
                     break;
                 case "up":
                     if (!maze.isTouching(pacman.getCenterX(), pacman.getCenterY() - pacman.getRadius(), 15)) {
                         pacman.setCenterY(pacman.getCenterY() - step);
-                        checkCokieCoalition(pacman, "y");
+                        checkCookieCoalition(pacman, "y");
                         checkGhostCoalition();
                     }
                     break;
                 case "down":
                    if (!maze.isTouching(pacman.getCenterX(), pacman.getCenterY() + pacman.getRadius(), 15)) {
                        pacman.setCenterY(pacman.getCenterY() + step);
-                       checkCokieCoalition(pacman, "y");
+                       checkCookieCoalition(pacman, "y");
                        checkGhostCoalition();
                    }
                    break;
@@ -284,7 +292,7 @@ public class Manager {
         };
     }
 
-    private void checkCokieCoalition(Pacman pacman, String axis) {
+    private void checkCookieCoalition(Pacman pacman, String axis) {
         double pacmanCenterY = pacman.getCenterY();
         double pacmanCenterX = pacman.getCenterX();
         double pacmanLeftEdge = pacmanCenterX - pacman.getRadius();
