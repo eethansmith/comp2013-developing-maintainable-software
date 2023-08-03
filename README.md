@@ -30,16 +30,15 @@ To run the game, you will need to have Java installed on your computer.
 
 ## Project Structure
 The project follows a simple structure, with each class having a distinct responsibility:
-
-Controller:
-Cookie:
-GameMetrics: Manages the display and updating of the player's score and remaining lives.
-Ghost:
-Main:
-Manager:
-Maze:
-Pacman: Defines the player's character, including its shape, color, and movement.
-Obstacle: Defines the obstacles in the game field.
+- [ ] Controller:
+- [ ] Cookie:
+- [ ] GameMetrics: Manages the display and updating of the player's score and remaining lives.
+- [ ] Ghost:
+- [ ] Main:
+- [ ] Manager:
+- [ ] Maze:
+- [ ] Pacman: Defines the player's character, including its shape, color, and movement.
+- [ ] Obstacle: Defines the obstacles in the game field.
 
 ## Test and Deploy
 
