@@ -26,7 +26,7 @@ public class Manager {
     private Maze maze;
     private int lives;
     private int score;
-    private Score scoreBoard;
+    private GameMetrics scoreBoard;
     private boolean gameEnded;
     private int cookiesEaten;
 
@@ -57,8 +57,8 @@ public class Manager {
         this.pacman.setCenterY(2.5 * Obstacle.THICKNESS);
         lives--;
         score -= 10;
-        this.scoreBoard.lives.setText("LIVES: " + this.lives);
-        this.scoreBoard.score.setText("SCORE: " + this.score);
+        this.scoreBoard.updateScore(this.score);
+        this.scoreBoard.updateLives(this.lives);
         if (lives == 0) {
             this.gameOver();
         }
@@ -73,10 +73,9 @@ public class Manager {
         javafx.scene.text.Text endGame = new javafx.scene.text.Text("Game Over, press ESC to restart");
         endGame.setX(Obstacle.THICKNESS * 3);
         endGame.setY(Obstacle.THICKNESS * 28);
-        endGame.setFont(Font.font("Arial", 40));
+        endGame.setFont(Font.font("Arial Black", 40));
         endGame.setFill(Color.ROYALBLUE);
-        root.getChildren().remove(this.scoreBoard.score);
-        root.getChildren().remove(this.scoreBoard.lives);
+        this.scoreBoard.removeTextsFromRoot();
         root.getChildren().add(endGame);
     }
 
@@ -101,7 +100,7 @@ public class Manager {
         background.setFill(Color.BLACK);
 
         root.getChildren().add(background);
-        this.maze.CreateMaze(root);
+        this.maze.createMaze(root);
         // 1st line
         Integer skip[] = {5, 17};
         for (int i = 0; i < 23; i++) {
@@ -204,7 +203,7 @@ public class Manager {
         root.getChildren().add(this.pacman);
         this.generateGhosts();
         root.getChildren().addAll(this.ghosts);
-        this.scoreBoard = new Score(root);
+        this.scoreBoard = new GameMetrics(root);
     }
 
     public void generateGhosts() {
@@ -341,7 +340,7 @@ public class Manager {
                     cookie.hide();
                 }
             }
-            this.scoreBoard.score.setText("Score: " + this.score);
+            this.scoreBoard.updateScore(this.score);
             if (this.cookiesEaten == this.cookieSet.size()) {
                 this.gameOver();
             }
