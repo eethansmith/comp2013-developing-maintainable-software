@@ -257,41 +257,41 @@ public class Manager {
         {
             public void handle(long currentNanoTime)
             {
-            switch (direction) {
-                case "left":
-                    if (!maze.isTouching(pacman.getCenterX() - pacman.getRadius(), pacman.getCenterY(), 15)) {
-                        pacman.setCenterX(pacman.getCenterX() - step);
-                        checkCookieCoalition(pacman, "x");
-                        checkGhostCoalition();
-                    }
-                    break;
-                case "right":
-                    if (!maze.isTouching(pacman.getCenterX() + pacman.getRadius(), pacman.getCenterY(), 15)) {
-                        pacman.setCenterX(pacman.getCenterX() + step);
-                        checkCookieCoalition(pacman, "x");
-                        checkGhostCoalition();
-                    }
-                    break;
-                case "up":
-                    if (!maze.isTouching(pacman.getCenterX(), pacman.getCenterY() - pacman.getRadius(), 15)) {
-                        pacman.setCenterY(pacman.getCenterY() - step);
-                        checkCookieCoalition(pacman, "y");
-                        checkGhostCoalition();
-                    }
-                    break;
-                case "down":
-                   if (!maze.isTouching(pacman.getCenterX(), pacman.getCenterY() + pacman.getRadius(), 15)) {
-                       pacman.setCenterY(pacman.getCenterY() + step);
-                       checkCookieCoalition(pacman, "y");
-                       checkGhostCoalition();
-                   }
-                   break;
-            }
+                switch (direction) {
+                    case "left":
+                        if (!maze.isTouching(pacman.getCenterX() - pacman.getRadius(), pacman.getCenterY(), 15)) {
+                            pacman.setCenterX(pacman.getCenterX() - step);
+                            checkCookieCollision(pacman, "x");
+                            checkGhostCollision();
+                        }
+                        break;
+                    case "right":
+                        if (!maze.isTouching(pacman.getCenterX() + pacman.getRadius(), pacman.getCenterY(), 15)) {
+                            pacman.setCenterX(pacman.getCenterX() + step);
+                            checkCookieCollision(pacman, "x");
+                            checkGhostCollision();
+                        }
+                        break;
+                    case "up":
+                        if (!maze.isTouching(pacman.getCenterX(), pacman.getCenterY() - pacman.getRadius(), 15)) {
+                            pacman.setCenterY(pacman.getCenterY() - step);
+                            checkCookieCollision(pacman, "y");
+                            checkGhostCollision();
+                        }
+                        break;
+                    case "down":
+                        if (!maze.isTouching(pacman.getCenterX(), pacman.getCenterY() + pacman.getRadius(), 15)) {
+                            pacman.setCenterY(pacman.getCenterY() + step);
+                            checkCookieCollision(pacman, "y");
+                            checkGhostCollision();
+                        }
+                        break;
+                }
             }
         };
     }
 
-    private void checkCookieCoalition(Pacman pacman, String axis) {
+    private void checkCookieCollision(Pacman pacman, String axis) {
         double pacmanCenterY = pacman.getCenterY();
         double pacmanCenterX = pacman.getCenterX();
         double pacmanLeftEdge = pacmanCenterX - pacman.getRadius();
@@ -347,7 +347,7 @@ public class Manager {
         }
     }
 
-    public void checkGhostCoalition() {
+    public void checkGhostCollision() {
         double pacmanCenterY = pacman.getCenterY();
         double pacmanCenterX = pacman.getCenterX();
         double pacmanLeftEdge = pacmanCenterX - pacman.getRadius();
