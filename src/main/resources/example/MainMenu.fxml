@@ -3,30 +3,28 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="372.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="941.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="example.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="1000" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitHeight="383.0" fitWidth="607.0" layoutX="-6.0" layoutY="-2.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../../../COMP2013/src/com/pacman/resources/MainMenuBackground.jpg" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="202.0" fitWidth="180.0" layoutX="8.0" layoutY="170.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../../../COMP2013/src/com/pacman/resources/PacMan.png" />
-         </image>
-      </ImageView>
-      <Text layoutX="52.0" layoutY="138.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="5.0" text="THE ARCADE GAME" textAlignment="CENTER" wrappingWidth="496.3399963378906">
+         <ImageView fitHeight="700" fitWidth="1100" layoutX="-2.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@MainMenuBackground.jpg" />
+            </image>
+         </ImageView>
+      <Text layoutX="183.0" layoutY="229.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="5.0" text="THE ARCADE GAME" textAlignment="CENTER" wrappingWidth="647.8077850341797">
          <font>
-            <Font name="Avenir Next Bold" size="44.0" />
+            <Font name="Avenir Next Bold" size="55.0" />
          </font>
          <fill>
             <LinearGradient endX="1.0" endY="1.0" startX="1.0" startY="0.14726840855106887">
@@ -50,9 +48,9 @@
             </LinearGradient>
          </fill>
       </Text>
-      <Text layoutX="128.0" layoutY="95.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="6.0" text="PACMAN" textAlignment="CENTER" wrappingWidth="339.3399963378906">
+      <Text layoutX="203.0" layoutY="169.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="6.0" text="PACMAN" textAlignment="CENTER" wrappingWidth="601.5585021972656">
          <font>
-            <Font name="Avenir Next Bold" size="74.0" />
+            <Font name="Avenir Next Bold" size="110.0" />
          </font>
          <fill>
             <LinearGradient endX="1.0" endY="1.0" startX="0.45605700712589076">
@@ -81,44 +79,74 @@
             </LinearGradient>
          </fill>
       </Text>
-      <Button alignment="TOP_CENTER" contentDisplay="TOP" layoutX="200.0" layoutY="239.0" mnemonicParsing="false" onMouseClicked="#switchToGame" prefHeight="62.0" prefWidth="200.0" text="PLAY" textAlignment="CENTER">
+      <Button fx:id="playButton" alignment="CENTER" contentDisplay="CENTER" layoutX="316.0" layoutY="352.0" mnemonicParsing="false" onAction="#switchToGame" opacity="0.8" prefHeight="82.0" prefWidth="381.0" style="-fx-background-color: rgba(255, 255, 255, 0);" text="PLAY" textAlignment="CENTER">
          <font>
-            <Font name="Arial Black" size="29.0" />
+            <Font name="Arial Black" size="55.0" />
          </font>
          <textFill>
             <LinearGradient endX="1.0" endY="1.0" startX="0.45605700712589076">
                <stops>
                   <Stop>
                      <color>
-                        <Color red="0.4736842215061188" green="0.4614035189151764" blue="0.41228070855140686" />
+                        <Color red="1.0" green="1.0" blue="1.0" />
                      </color>
                   </Stop>
                   <Stop offset="0.006711409395973154">
                      <color>
-                        <Color red="0.4736842215061188" green="0.4614035189151764" blue="0.41228070855140686" />
+                        <Color red="1.0" green="1.0" blue="1.0" />
                      </color>
                   </Stop>
                   <Stop offset="1.0">
                      <color>
-                        <Color red="0.1184210553765297" green="0.11616411060094833" blue="0.1080043837428093" />
+                        <Color red="0.8552631735801697" green="0.8394249677658081" blue="0.8394249677658081" />
                      </color>
                   </Stop>
                </stops>
             </LinearGradient>
          </textFill>
       </Button>
-      <Button alignment="CENTER" contentDisplay="CENTER" layoutX="213.0" layoutY="314.0" mnemonicParsing="false" onMouseClicked="#switchToLevelSelect" prefHeight="18.0" prefWidth="169.0" text="Level Select" textAlignment="CENTER">
+      <Button fx:id="levelSelectButton" alignment="CENTER" contentDisplay="CENTER" layoutX="353.0" layoutY="473.0" mnemonicParsing="false" onMouseClicked="#selectLevel" opacity="0.8" prefHeight="74.0" prefWidth="305.0" style="-fx-background-color: rgba(255, 255, 255, 0);" text="LEVEL SELECT" textAlignment="CENTER">
          <font>
-            <Font name="Arial Bold" size="19.0" />
+            <Font name="Arial Black" size="30.0" />
          </font>
+            <textFill>
+               <LinearGradient endX="1.0" endY="1.0">
+                  <stops>
+                     <Stop>
+                        <color>
+                           <Color red="0.9868420958518982" green="0.9868420958518982" blue="0.9868420958518982" />
+                        </color>
+                     </Stop>
+                     <Stop offset="0.006711409395973154">
+                        <color>
+                           <Color red="0.9868420958518982" green="0.9868420958518982" blue="0.9868420958518982" />
+                        </color>
+                     </Stop>
+                     <Stop offset="1.0">
+                        <color>
+                           <Color red="1.0" green="1.0" blue="1.0" />
+                        </color>
+                     </Stop>
+                  </stops>
+               </LinearGradient>
+            </textFill>
       </Button>
-      <TextField alignment="CENTER" layoutX="227.0" layoutY="173.0" opacity="0.81" prefHeight="26.0" prefWidth="146.0" promptText="NAME">
+      <TextField fx:id="playerNameInput" alignment="CENTER" layoutX="383.0" layoutY="282.0" opacity="0.81" prefHeight="53.0" prefWidth="240.0" promptText="NAME" onKeyTyped="#filterInput" style="-fx-border-color: black;">
          <cursor>
             <Cursor fx:constant="TEXT" />
          </cursor>
          <font>
-            <Font name="Webdings" size="16.0" />
+            <Font name="Silom" size="30.0" />
          </font>
+            <effect>
+               <DropShadow />
+            </effect>
       </TextField>
+      <ImageView fitHeight="314.0" fitWidth="283.0" layoutX="16.0" layoutY="255.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@PacMan.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
+</VBox>
