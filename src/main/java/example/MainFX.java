@@ -18,7 +18,7 @@ public class MainFX extends Application {
         primaryStage.setTitle("PACMAN ARCADE - MAIN MENU");
 
         Parent root = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
-        primaryStage.setScene(new Scene(root, 640, 480));
+        primaryStage.setScene(new Scene(root, 1000, 600));
         primaryStage.show();
     }
 
