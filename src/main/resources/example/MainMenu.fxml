@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="372.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="372.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="example.Controller">
    <children>
       <ImageView fitHeight="383.0" fitWidth="607.0" layoutX="-6.0" layoutY="-2.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -81,7 +81,7 @@
             </LinearGradient>
          </fill>
       </Text>
-      <Button alignment="TOP_CENTER" contentDisplay="TOP" layoutX="200.0" layoutY="239.0" mnemonicParsing="false" onMouseClicked="#switchToGame" prefHeight="62.0" prefWidth="200.0" text="PLAY" textAlignment="CENTER">
+      <Button fx:id="playButton" alignment="TOP_CENTER" contentDisplay="TOP" layoutX="200.0" layoutY="239.0" mnemonicParsing="false" onMouseClicked="#switchToGame" prefHeight="62.0" prefWidth="200.0" text="PLAY" textAlignment="CENTER">
          <font>
             <Font name="Arial Black" size="29.0" />
          </font>
@@ -107,12 +107,12 @@
             </LinearGradient>
          </textFill>
       </Button>
-      <Button alignment="CENTER" contentDisplay="CENTER" layoutX="213.0" layoutY="314.0" mnemonicParsing="false" onMouseClicked="#switchToLevelSelect" prefHeight="18.0" prefWidth="169.0" text="Level Select" textAlignment="CENTER">
+      <Button fx:id="levelSelectButton" alignment="CENTER" contentDisplay="CENTER" layoutX="213.0" layoutY="314.0" mnemonicParsing="false" onMouseClicked="#selectLevel" prefHeight="18.0" prefWidth="169.0" text="Level Select" textAlignment="CENTER">
          <font>
             <Font name="Arial Bold" size="19.0" />
          </font>
       </Button>
-      <TextField alignment="CENTER" layoutX="227.0" layoutY="173.0" opacity="0.81" prefHeight="26.0" prefWidth="146.0" promptText="NAME">
+      <TextField fx:id="playerNameInput" alignment="CENTER" layoutX="227.0" layoutY="173.0" opacity="0.81" prefHeight="26.0" prefWidth="146.0" promptText="NAME">
          <cursor>
             <Cursor fx:constant="TEXT" />
          </cursor>
