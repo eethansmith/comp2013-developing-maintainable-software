@@ -8,13 +8,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import java.io.*;
+import java.util.*;
 
 public class Manager {
 
@@ -49,19 +44,6 @@ public class Manager {
         this.cookiesEaten = 0;
     }
 
-    public void setPlayerName(String playerName) {
-        // Check if playerName is empty or null, and set it to "N/A" if it is
-        if (playerName == null || playerName.trim().isEmpty()) {
-            playerName = "N/A";  // Use 'this' keyword to refer to the member variable
-        }
-        System.out.println("Received player name: " + playerName);
-        this.name = playerName;
-    }
-
-    public static String getName() {
-        return name;
-    }
-
     private void lifeGone() {
         this.leftPacmanAnimation.stop();
         this.rightPacmanAnimation.stop();
@@ -80,7 +62,6 @@ public class Manager {
             this.gameOver();
         }
     }
-
     private void gameOver() {
         gameEnded = true;
         root.getChildren().remove(pacman);
@@ -96,38 +77,8 @@ public class Manager {
         root.getChildren().add(endGame);
         String playerName = Manager.getName();
         saveScoreToCSV(playerName, score);
+        displayHighScores();
     }
-
-
-    private void saveScoreToCSV(String playerName, int playerScore) {
-        File csvFile = new File("player_scores.csv");
-        FileWriter csvWriter = null;
-        try {
-            // Check if the file exists. If not, create it and add the header
-            if (!csvFile.exists()) {
-                csvFile.createNewFile();
-                csvWriter = new FileWriter(csvFile);
-                csvWriter.append("PlayerName,PlayerScore\n");
-            } else {
-                // File already exists, just append to it
-                csvWriter = new FileWriter(csvFile, true);
-            }
-            // Append playerName and playerScore to the file
-            csvWriter.append(playerName).append(",").append(Integer.toString(playerScore)).append("\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (csvWriter != null) {
-                    csvWriter.flush();
-                    csvWriter.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void restartGame(KeyEvent event) {
         if (event.getCode() == KeyCode.ESCAPE && gameEnded) {
             root.getChildren().clear();
@@ -140,6 +91,97 @@ public class Manager {
             this.score = 0;
             this.cookiesEaten = 0;
             gameEnded = false;
+        }
+    }
+
+
+    public void setPlayerName(String playerName) {
+        // Check if playerName is empty or null, and set it to "N/A" if it is
+        if (playerName == null || playerName.trim().isEmpty()) {
+            playerName = "N/A";  // Use 'this' keyword to refer to the member variable
+        }
+        System.out.println("Received player name: " + playerName);
+        this.name = playerName;
+    }
+
+    public static String getName() {
+        return name;
+    }
+
+    private void saveScoreToCSV(String playerName, int playerScore) {
+        File csvFile = new File("player_scores.csv");
+        List<String[]> records = new ArrayList<>();
+
+        try {
+            // Check if the file exists. If not, create it and add the header
+            if (!csvFile.exists()) {
+                csvFile.createNewFile();
+                try (FileWriter csvWriter = new FileWriter(csvFile)) {
+                    csvWriter.append("PlayerName,PlayerScore\n");
+                    csvWriter.append(playerName).append(",").append(Integer.toString(playerScore)).append("\n");
+                }
+            } else {
+                // File already exists, just append to it
+                try (FileWriter csvWriter = new FileWriter(csvFile, true)) {
+                    csvWriter.append(playerName).append(",").append(Integer.toString(playerScore)).append("\n");
+                }
+            }
+
+            // Read all existing records
+            try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+                String line;
+                // Skip the header line
+                br.readLine();
+                while ((line = br.readLine()) != null) {
+                    records.add(line.split(","));
+                }
+            }
+
+            // Sort records based on scores in descending order
+            records.sort((a, b) -> Integer.compare(Integer.parseInt(b[1]), Integer.parseInt(a[1])));
+
+            // Write the sorted list back to the file
+            try (FileWriter csvWriter = new FileWriter(csvFile)) {
+                csvWriter.append("PlayerName,PlayerScore\n");
+                for (String[] record : records) {
+                    csvWriter.append(String.join(",", record)).append("\n");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void displayHighScores() {
+        File csvFile = new File("player_scores.csv");
+        List<String[]> records = new ArrayList<>();
+
+        try {
+            // Read all existing records
+            try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+                String line;
+                // Skip the header line
+                br.readLine();
+                while ((line = br.readLine()) != null) {
+                    records.add(line.split(","));
+                }
+            }
+
+            // Sort records based on scores in descending order
+            records.sort((a, b) -> Integer.compare(Integer.parseInt(b[1]), Integer.parseInt(a[1])));
+
+            // Display the top 3 scores
+            System.out.println("HIGHSCORES:");
+            int rank = 1;
+            for (String[] record : records) {
+                if (rank > 3) {
+                    break;
+                }
+                System.out.println(rank + ". " + record[0] + " - " + record[1]);
+                rank++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
