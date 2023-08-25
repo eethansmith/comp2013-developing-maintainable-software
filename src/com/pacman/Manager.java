@@ -1,4 +1,4 @@
-package com.pacman;
+package example;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.Group;

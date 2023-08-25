@@ -105,7 +105,7 @@
             </LinearGradient>
          </textFill>
       </Button>
-      <Button fx:id="levelSelectButton" alignment="CENTER" contentDisplay="CENTER" layoutX="353.0" layoutY="473.0" mnemonicParsing="false" onMouseClicked="#selectLevel" opacity="0.8" prefHeight="74.0" prefWidth="305.0" style="-fx-background-color: rgba(255, 255, 255, 0);" text="LEVEL SELECT" textAlignment="CENTER">
+      <Button fx:id="levelSelectButton" alignment="CENTER" contentDisplay="CENTER" layoutX="353.0" layoutY="473.0" mnemonicParsing="false" onAction="#selectLevel" opacity="0.8" prefHeight="74.0" prefWidth="305.0" style="-fx-background-color: rgba(255, 255, 255, 0);" text="LEVEL SELECT" textAlignment="CENTER">
          <font>
             <Font name="Arial Black" size="30.0" />
          </font>
