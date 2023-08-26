@@ -1,49 +1,87 @@
 package example;
 
+import javafx.event.ActionEvent;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.fxml.FXML;
 
-/**
- * Main class for the PACMAN GAME
- * here the program sets up the game's UI and handles user interaction.
- */
-public class Main {
+public class Controller {
 
-    /**
-     * Method to start the PACMAN game.
-     */
-    public void startGame() {
-        Stage gameStage = new Stage();
-        gameStage.setTitle("PACMAN - The Arcade Game");
+    private Stage gameStage;
+    Group root = new Group();
 
-        Group root = new Group();
-        Scene scene = new Scene(root);
-        gameStage.setScene(scene);
+    @FXML
+    private Button playButton;
 
-        Canvas canvas = new Canvas(1225, 600);
-        root.getChildren().add(canvas);
+    @FXML
+    private Button levelSelectButton;
 
-        Manager gameManager = new Manager(root);
-        gameManager.drawMaze();
+    @FXML
+    private TextField playerNameInput;
 
-        // Assign event handlers for key presses and releases
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, gameManager::movePacman);
-        scene.addEventHandler(KeyEvent.KEY_RELEASED, gameManager::stopPacman);
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, gameManager::restartGame);
+    @FXML
+    public void initialize() {
+        playerNameInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (newValue.length() > 3) {
+                    playerNameInput.setText(oldValue);
+                } else {
+                    playerNameInput.setText(newValue.toUpperCase());
+                }
+            }
+        });
 
-        gameStage.show();
+        // Binding the filterInput method to the playerNameInput
+        playerNameInput.addEventFilter(KeyEvent.KEY_TYPED, this::filterInput);
+
     }
 
-    /**
-     * Main method that launches the JavaFX application.
-     *
-     * @param args command-line arguments
-     */
-    public static void main(String[] args) {
-        Main mainGame = new Main();
-        mainGame.startGame();
+    @FXML
+    private void switchToGame(ActionEvent event) {
+        String playerName = playerNameInput.getText();
+        Manager manager = new Manager(root, gameStage);
+        manager.setPlayerName(playerName);
+        Stage currentStage = (Stage) playButton.getScene().getWindow();
+        MainFX.launchGame(currentStage);
+        System.out.println("Prepare to enter the game...");
     }
+
+    @FXML
+    public void selectLevel(ActionEvent event) {
+        Stage currentStage = (Stage) levelSelectButton.getScene().getWindow();
+        MainFX.launchLevelSelector(currentStage);
+        System.out.println("Select the level difficulty you would like...");
+    }
+
+    public void filterInput(KeyEvent keyEvent) {
+        char charTyped = keyEvent.getCharacter().charAt(0);
+
+        // If the character is not a letter or number, consume (discard) the event.
+        if (!Character.isLetterOrDigit(charTyped)) {
+            keyEvent.consume();
+        }
+
+        // Limit to only 4 characters.
+        TextField source = (TextField) keyEvent.getSource();
+        if (source.getText().length() >= 4) {
+            keyEvent.consume();
+        }
+    }
+
+    //when option chosen in LevelSelect takes user back to the main menu with the option returned.
+    @FXML
+    public void switchToMenu(MouseEvent event) {
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        MainFX.launchMainMenu(currentStage);
+    }
+
 }

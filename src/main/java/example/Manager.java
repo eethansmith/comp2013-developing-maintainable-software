@@ -1,14 +1,17 @@
 package example;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Manager {
@@ -28,9 +31,11 @@ public class Manager {
     private boolean gameEnded;
     private int cookiesEaten;
     private static String name;
+    private Stage gameStage;
 
-    Manager(Group root) {
+    Manager(Group root, Stage gameStage) {
         this.root = root;
+        this.gameStage = gameStage;
         this.maze = new Maze();
         this.pacman = new Pacman(2.5 * Obstacle.THICKNESS, 2.5 * Obstacle.THICKNESS);
         this.cookieSet = new HashSet<>();
@@ -77,7 +82,17 @@ public class Manager {
         root.getChildren().add(endGame);
         String playerName = Manager.getName();
         saveScoreToCSV(playerName, score);
-        displayHighScores();
+        Platform.runLater(() -> {
+            if (gameStage != null) {
+                gameStage.close();
+            }
+            try {
+                new ScoreboardScreen().start(new Stage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
     }
     public void restartGame(KeyEvent event) {
         if (event.getCode() == KeyCode.ESCAPE && gameEnded) {
@@ -112,18 +127,20 @@ public class Manager {
         File csvFile = new File("player_scores.csv");
         List<String[]> records = new ArrayList<>();
 
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+
         try {
             // Check if the file exists. If not, create it and add the header
             if (!csvFile.exists()) {
                 csvFile.createNewFile();
                 try (FileWriter csvWriter = new FileWriter(csvFile)) {
-                    csvWriter.append("PlayerName,PlayerScore\n");
-                    csvWriter.append(playerName).append(",").append(Integer.toString(playerScore)).append("\n");
+                    csvWriter.append("PlayerName,PlayerScore,Recorded\n");
+                    csvWriter.append(playerName).append(",").append(Integer.toString(playerScore)).append(",").append(timeStamp).append("\n");
                 }
             } else {
                 // File already exists, just append to it
                 try (FileWriter csvWriter = new FileWriter(csvFile, true)) {
-                    csvWriter.append(playerName).append(",").append(Integer.toString(playerScore)).append("\n");
+                    csvWriter.append(playerName).append(",").append(Integer.toString(playerScore)).append(",").append(timeStamp).append("\n");
                 }
             }
 
@@ -151,40 +168,6 @@ public class Manager {
             e.printStackTrace();
         }
     }
-
-    public void displayHighScores() {
-        File csvFile = new File("player_scores.csv");
-        List<String[]> records = new ArrayList<>();
-
-        try {
-            // Read all existing records
-            try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-                String line;
-                // Skip the header line
-                br.readLine();
-                while ((line = br.readLine()) != null) {
-                    records.add(line.split(","));
-                }
-            }
-
-            // Sort records based on scores in descending order
-            records.sort((a, b) -> Integer.compare(Integer.parseInt(b[1]), Integer.parseInt(a[1])));
-
-            // Display the top 3 scores
-            System.out.println("HIGHSCORES:");
-            int rank = 1;
-            for (String[] record : records) {
-                if (rank > 3) {
-                    break;
-                }
-                System.out.println(rank + ". " + record[0] + " - " + record[1]);
-                rank++;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void drawMaze() {
         // Create a black rectangle to serve as the background
         Rectangle background = new Rectangle(0, 0,1225, 600);
