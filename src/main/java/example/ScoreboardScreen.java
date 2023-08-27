@@ -1,15 +1,19 @@
-package example;  // Import your MainFX class
+package example;
+
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -23,51 +27,58 @@ public class ScoreboardScreen extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
-        // Create a root BorderPane
         BorderPane root = new BorderPane();
+        VBox scoreBox = new VBox();
+        scoreBox.setAlignment(Pos.CENTER);
+        scoreBox.setSpacing(10);  // Reduced spacing between elements
 
-        displayHighScores();
+        // Display high scores and fill the VBox
+        displayHighScores(scoreBox);
 
-        // Set background image
-        BackgroundImage backgroundImage = new BackgroundImage(new Image("file:/MainMenuBackground.jpg", 1000, 600, false, true),
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-        root.setBackground(new Background(backgroundImage));
+        // Background setup
+        Image backgroundImage = new Image(getClass().getResource("/example/MainMenuBackground.jpg").toExternalForm(), 1000, 600, false, true);
+        root.setBackground(new Background(new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
 
-        // Create the "Return to Main Menu" button
-        Button returnToMenuButton = new Button("Return to Main Menu");
-        returnToMenuButton.setStyle("-fx-text-fill: white;");
-        returnToMenuButton.setFont(new Font("Arial", 24));
+        root.setCenter(scoreBox);
 
-        // Add an action handler to the "Return to Main Menu" button
-        returnToMenuButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                // Close the current window
-                primaryStage.close();
+        Label MenuLabel = new Label("MENU");
+        MenuLabel.getStyleClass().add("button-label");
 
-                // Launch the Main Menu
-                Platform.runLater(() -> MainFX.launchMainMenu(new Stage()));
-            }
+        Button MenuButton = new Button();
+        MenuButton.setGraphic(MenuLabel);
+        MenuButton.getStyleClass().add("styled-button");
+
+        MenuButton.setOnAction(e -> {
+            primaryStage.close();
+            Platform.runLater(() -> MainFX.launchMainMenu(new Stage()));
         });
 
-        // Create a HBox and add the button to it
-        HBox hbox = new HBox();
-        hbox.setAlignment(Pos.CENTER);  // Center the button
-        hbox.getChildren().add(returnToMenuButton);
+        // Create a Label
+        Label ExitLabel = new Label("EXIT GAME");
+        ExitLabel.getStyleClass().add("button-label");
 
-        // Add the HBox to the bottom of the root BorderPane
-        root.setBottom(hbox);
+// Create a Button and set the label as its graphic content
+        Button ExitButton = new Button();
+        ExitButton.setGraphic(ExitLabel);
+        ExitButton.getStyleClass().add("styled-button");
+        ExitButton.setOnAction(e -> Platform.exit());
 
-        // Create the scene and add the root BorderPane
+        // Arrange buttons in a VBox
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(3);
+        vbox.getChildren().addAll(MenuLabel, ExitLabel, MenuButton, ExitButton);
+
+        root.setBottom(vbox);
+
         Scene scene = new Scene(root, 1000, 600);
-
-        // Set the stage
         primaryStage.setTitle("Scoreboard Screen");
         primaryStage.setScene(scene);
         primaryStage.show();
+        scene.getStylesheets().add(getClass().getResource("/example/styles.css").toExternalForm());
     }
-    public void displayHighScores() {
+    public void displayHighScores(VBox scoreBox) {
+        // Your code for reading the file and filling the scoreBox
         File csvFile = new File("player_scores.csv");
         List<String[]> records = new ArrayList<>();
 
@@ -91,41 +102,56 @@ public class ScoreboardScreen extends Application {
             String[] mostRecentRecord = recordsCopy.get(0); // Get the most recent record
 
             // Display the top 3 scores
-            System.out.println("HIGHSCORES:");
+            // Create and add high score labels to the VBox
+            Text headerLabel = new Text("HIGHSCORES:");
+            headerLabel.getStyleClass().add("header-label");
+            scoreBox.getChildren().add(headerLabel);
+
             int rank = 1;
             int yourScoreRank = -1;
+
             for (String[] record : records) {
                 if (record[0].equals(mostRecentRecord[0]) && record[1].equals(mostRecentRecord[1])) {
                     yourScoreRank = rank;
                 }
                 if (rank <= 3) {
-                    System.out.println(rank + ". " + record[0] + " - " + record[1]);
+                    Label label = new Label(rank + ". " + record[0] + " - " + record[1]);
+                    label.getStyleClass().add("score-label");
+                    scoreBox.getChildren().add(label);
+                    scoreBox.getStyleClass().add("score-box");
                 }
                 rank++;
             }
 
             // If less than 3 scores are available, fill up with N/A and 0
             while (rank <= 3) {
-                System.out.println(rank + ". " + "N/A - 0");
+                Label label = new Label(rank + ". " + "N/A - 0");
+                label.setId("highscoreLabel");
+                scoreBox.getChildren().add(label);
                 rank++;
             }
+            Label spacerLabel = new Label("");
+            spacerLabel.setId("spacerLabel");
+            scoreBox.getChildren().add(spacerLabel);
+
+            Text yourScoreText = new Text("Your Score:");
+            yourScoreText.setId("yourScoreText");
+            scoreBox.getChildren().add(yourScoreText);
 
             if (yourScoreRank != -1) {
-                System.out.println(" ");
-                System.out.println("Your Score: ");
-                System.out.println(yourScoreRank + ". " + mostRecentRecord[0] + " - " + mostRecentRecord[1]);
+                Label scoreLabel = new Label(yourScoreRank + ". " + mostRecentRecord[0] + " - " + mostRecentRecord[1]);
+                scoreLabel.getStyleClass().add("score-label");
+                scoreBox.getChildren().add(scoreLabel);
             } else {
-                System.out.println(" ");
-                System.out.println("Your Score: ");
-                System.out.println(mostRecentRecord[0] + " - " + mostRecentRecord[1]);
+                Label scoreLabel = new Label("N/A");
+                scoreLabel.getStyleClass().add("na-label");
+                scoreBox.getChildren().add(scoreLabel);
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
     public static void main(String[] args) {
         launch(args);
