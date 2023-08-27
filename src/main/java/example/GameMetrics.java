@@ -1,94 +1,282 @@
 package example;
 
-import javafx.scene.Group;
+import javafx.animation.AnimationTimer;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import javafx.scene.shape.Rectangle;
+
+import java.util.Random;
 
 /**
- * The Score class represents the player's score and lives count in the game.
- * It displays the current score and lives count on the game screen.
+ * example.Ghost class represents a ghost character in a example.Pacman game.
+ * example.Ghost moves autonomously within the maze and interacts with the player.
  */
-public class GameMetrics {
+public class Ghost extends Rectangle implements Runnable {
 
     /**
-     * Represents the player's score text.
-     * It's private to ensure encapsulation.
+     * Direction in which the example.Ghost is currently moving.
      */
-    private Text score;
+    String direction;
 
     /**
-     * Represents the player's lives text.
-     * It's private to ensure encapsulation.
+     * Reference to the example.Manager class to check for collisions.
      */
-    private Text lives;
+    Manager manager;
 
     /**
-     * The root Group that contains the game objects.
+     * Reference to the example.Maze in which the example.Ghost moves.
      */
-    private Group root;
+    Maze maze;
 
     /**
-     * Constructor for Score class.
-     * Initializes the score and lives text objects and adds them to the root group.
+     * AnimationTimer object controlling the example.Ghost's movement.
+     */
+    AnimationTimer animation;
+
+    /**
+     * Counter for the number of steps the example.Ghost has taken.
+     */
+    int timesWalked;
+
+    /**
+     * example.Ghost constructor. Initialises a example.Ghost instance with given parameters.
      *
-     * @param root  The Group object representing the root node of the scene graph.
+     * @param x x-coordinate of the example.Ghost's position
+     * @param y y-coordinate of the example.Ghost's position
+     * @param color Color of the example.Ghost
+     * @param maze Reference to the example.Maze
+     * @param manager Reference to the example.Manager
      */
-    public GameMetrics(Group root) {
-        this.root = root;
-        this.score = initializeText("SCORE: 0", Obstacle.THICKNESS * 4, Obstacle.THICKNESS * 28, Color.GOLD, Font.font("Arial Black", 50));
-        this.lives = initializeText("LIVES: 3", Obstacle.THICKNESS * 20, Obstacle.THICKNESS * 28, Color.GOLD, Font.font("Arial Black", 50));
-        root.getChildren().addAll(score, lives);
+    public Ghost(double x, double y, Color color, Maze maze, Manager manager) {
+        // Set the x-coordinate of the example.Ghost
+        this.setX(x);
+        // Set the y-coordinate of the example.Ghost
+        this.setY(y);
+        // Assign the example.Maze object
+        this.maze = maze;
+        // Assign the example.Manager object
+        this.manager = manager;
+        // Set the height of the example.Ghost
+        this.setHeight(50);
+        // Set the width of the example.Ghost
+        this.setWidth(50);
+        // Set the color of the example.Ghost
+        this.setFill(color);
+        // Initialize the step counter to 0
+        this.timesWalked = 0;
+        // Set initial moving direction to down
+        this.direction = "down";
+        // Create the movement animation for the example.Ghost
+        this.createAnimation();
     }
 
     /**
-     * Initialize a Text object with given properties
+     * Generates a random direction excluding the two provided directions.
      *
-     * @param content Initial text content.
-     * @param x X coordinate for the text position.
-     * @param y Y coordinate for the text position.
-     * @param fill Fill color for the text.
-     * @param font Font for the text.
-     * @return Initialized Text object.
+     * @param exclude1 Direction to exclude
+     * @param exclude2 Another direction to exclude
+     * @return String Randomly selected direction
      */
-    private Text initializeText(String content, double x, double y, Color fill, Font font) {
-        Text text = new Text(x, y, content);
-        text.setFill(fill);
-        text.setFont(font);
-        return text;
+    private String getRandomDirection(String exclude1, String exclude2) {
+        // Possible directions
+        String[] directions = {"left", "right", "up", "down"};
+        // Generate a random index for direction array
+        int rnd = new Random().nextInt(directions.length);
+        // Keep generating a new index until a direction other than exclude1 and exclude2 is selected
+        while (directions[rnd].equals(exclude1) || directions[rnd].equals(exclude2)) {
+            rnd = new Random().nextInt(directions.length);
+        }
+        // Return the selected direction
+        return directions[rnd];
     }
 
     /**
-     * Updates the score text with the new score value.
+     * Generates a random boolean value.
      *
-     * @param newScore The new score value.
+     * @return boolean Randomly generated true or false.
      */
-    public void updateScore(int newScore) {
-        score.setText("SCORE: " + newScore);
+    private boolean getRandomBoolean() {
+        // Create Random object
+        Random rand = new Random();
+        // Return a random boolean value
+        return rand.nextBoolean();
     }
 
     /**
-     * Updates the lives text with the new lives count.
+     * Returns the AnimationTimer instance that controls the example.Ghost's movement.
      *
-     * @param newLives The new lives count.
+     * @return AnimationTimer The animation timer of the example.Ghost
      */
-    public void updateLives(int newLives) {
-        lives.setText("LIVES: " + newLives);
+    public AnimationTimer getAnimation() {
+        // Return the animation timer controlling the example.Ghost's movement
+        return animation;
     }
 
     /**
-     * Removes score and lives texts from the root group.
-     * Useful for clearing the screen or resetting the score and lives.
+     * Checks if there's a path available in the provided direction.
+     *
+     * @param direction Direction to check for an available path
      */
-    public void removeTextsFromRoot() {
-        root.getChildren().removeAll(score, lives);
+    private void checkIfTheresPathToGo(String direction) {
+        // Variables for each edge of the example.Ghost
+        double rightEdge, leftEdge, topEdge, bottomEdge;
+        // Use a switch to check if there's a path in the direction provided
+        switch (direction) {
+            case "down":
+                // Calculate each edge based on the example.Ghost's current position and size
+                leftEdge = getX() - 10;
+                bottomEdge = getY() + getHeight() + 15;
+                rightEdge = getX() + getWidth() + 10;
+                // If there's no obstacle, set the example.Ghost's direction to down
+                if (!maze.hasObstacle(leftEdge, rightEdge, bottomEdge - 1, bottomEdge)) {
+                    this.direction = direction;
+                }
+                break;
+            case "up":
+                // Calculating each edge
+                leftEdge = getX() - 10;
+                rightEdge = getX() + getWidth() + 10;
+                topEdge = getY() - 15;
+                // If there's no obstacle, set the example.Ghost's direction to up
+                if (!maze.hasObstacle(leftEdge, rightEdge, topEdge - 1, topEdge)) {
+                    this.direction = direction;
+                }
+                break;
+            case "left":
+                // Calculating each edge
+                leftEdge = getX() - 15;
+                bottomEdge = getY() + getHeight() + 10;
+                topEdge = getY() - 10;
+                // If there's no obstacle, set the example.Ghost's direction to left
+                if (!maze.hasObstacle(leftEdge - 1, leftEdge, topEdge, bottomEdge)) {
+                    this.direction = direction;
+                }
+                break;
+            case "right":
+                // Calculating each edge
+                bottomEdge = getY() + getHeight() + 10;
+                rightEdge = getX() + getWidth() + 15;
+                topEdge = getY() - 10;
+                // If there's no obstacle, set the example.Ghost's direction to right
+                if (!maze.hasObstacle(rightEdge - 1, rightEdge, topEdge, bottomEdge)) {
+                    this.direction = direction;
+                }
+                break;
+        }
     }
 
     /**
-     * Adds score and lives texts to the root group.
-     * Useful for displaying the score and lives after being removed or at the start of the game.
+     * Moves the example.Ghost in the provided direction until it can't move further.
+     *
+     * @param whereToGo Direction in which to move
+     * @param whereToChangeTo Direction to switch to upon obstruction
+     * @param leftEdge Left edge coordinate
+     * @param topEdge Top edge coordinate
+     * @param rightEdge Right edge coordinate
+     * @param bottomEdge Bottom edge coordinate
+     * @param padding Padding to consider while moving
      */
-    public void addTextsToRoot() {
-        root.getChildren().addAll(score, lives);
+    private void moveUntilYouCant(String whereToGo, String whereToChangeTo, double leftEdge, double topEdge, double rightEdge, double bottomEdge, double padding) {
+        double step = 5;
+        switch (whereToGo) {
+            case "left":
+                if (!maze.isTouching(leftEdge, topEdge, padding)) {
+                    setX(leftEdge - step);
+                } else {
+                    while (maze.isTouching(getX(), getY(), padding)) {
+                        setX(getX() + 1);
+                    }
+                    direction = whereToChangeTo;
+                }
+                break;
+            case "right":
+                if (!maze.isTouching(rightEdge, topEdge, padding)) {
+                    setX(leftEdge + step);
+                } else {
+                    while (maze.isTouching(getX() + getWidth(), getY(), padding)) {
+                        setX(getX() - 1);
+                    }
+                    direction = whereToChangeTo;
+                }
+                break;
+            case "up":
+                if (!maze.isTouching(leftEdge, topEdge, padding)) {
+                    setY(topEdge - step);
+                } else {
+                    while (maze.isTouching(getX(), getY(), padding)) {
+                        setY(getY() + 1);
+                    }
+                    direction = "left";
+                }
+                break;
+            case "down":
+                if (!maze.isTouching(leftEdge, bottomEdge, padding)) {
+                    setY(topEdge + step);
+                } else {
+                    while (maze.isTouching(getX(), getY() + getHeight(), padding)) {
+                        setY(getY() - 1);
+                    }
+                    direction = "right";
+                }
+                break;
+        }
+
+    }
+
+    /**
+     * Creates an animation for the example.Ghost's movement.
+     */
+    public void createAnimation() {
+        this.animation = new AnimationTimer()
+        {
+            public void handle(long currentNanoTime)
+            {
+                manager.checkGhostCollision();
+                double leftEdge = getX();
+                double topEdge = getY();
+                double rightEdge = getX() + getWidth();
+                double bottomEdge = getY() + getHeight();
+                double padding = 12;
+                timesWalked++;
+                int walkAtLeast = 4;
+                switch (direction) {
+                    case "left":
+                        moveUntilYouCant("left", "down", leftEdge, topEdge, rightEdge, bottomEdge, padding);
+                        if (timesWalked > walkAtLeast) {
+                            checkIfTheresPathToGo(getRandomDirection("left", "right"));
+                            timesWalked = 0;
+                        }
+                        break;
+                    case "right":
+                        moveUntilYouCant("right", "up", leftEdge, topEdge, rightEdge, bottomEdge, padding);
+                        if (timesWalked > walkAtLeast) {
+                            checkIfTheresPathToGo(getRandomDirection("left", "right"));
+                            timesWalked = 0;
+                        }
+                        break;
+                    case "up":
+                        moveUntilYouCant("up", "left", leftEdge, topEdge, rightEdge, bottomEdge, padding);
+                        if (timesWalked > walkAtLeast) {
+                            checkIfTheresPathToGo(getRandomDirection("up", "down"));
+                            timesWalked = 0;
+                        }
+                        break;
+                    case "down":
+                        moveUntilYouCant("down", "right", leftEdge, topEdge, rightEdge, bottomEdge, padding);
+                        if (timesWalked > walkAtLeast) {
+                            checkIfTheresPathToGo(getRandomDirection("up", "down"));
+                            timesWalked = 0;
+                        }
+                        break;
+                }
+            }
+        };
+    }
+
+    /**
+     * Starts the animation timer for the example.Ghost's movement.
+     */
+    @Override
+    public void run() {
+        this.animation.start();
     }
 }

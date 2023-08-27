@@ -1,17 +1,20 @@
 package example;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.scene.Group;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Manager {
 
@@ -29,9 +32,12 @@ public class Manager {
     private GameMetrics scoreBoard;
     private boolean gameEnded;
     private int cookiesEaten;
+    private static String name;
+    private Stage gameStage;
 
-    Manager(Group root) {
+    Manager(Group root, Stage gameStage) {
         this.root = root;
+        this.gameStage = gameStage;
         this.maze = new Maze();
         this.pacman = new Pacman(2.5 * Obstacle.THICKNESS, 2.5 * Obstacle.THICKNESS);
         this.cookieSet = new HashSet<>();
@@ -63,9 +69,8 @@ public class Manager {
             this.gameOver();
         }
     }
-
     private void gameOver() {
-        this.gameEnded = true;
+        gameEnded = true;
         root.getChildren().remove(pacman);
         for (Ghost ghost : ghosts) {
             root.getChildren().remove(ghost);
@@ -77,8 +82,20 @@ public class Manager {
         endGame.setFill(Color.ROYALBLUE);
         this.scoreBoard.removeTextsFromRoot();
         root.getChildren().add(endGame);
-    }
+        String playerName = Manager.getName();
+        saveScoreToCSV(playerName, score);
+        Platform.runLater(() -> {
+            if (gameStage != null) {
+                gameStage.close();
+            }
+            try {
+                new ScoreboardScreen().start(new Stage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
+        });
+    }
     public void restartGame(KeyEvent event) {
         if (event.getCode() == KeyCode.ESCAPE && gameEnded) {
             root.getChildren().clear();
@@ -94,12 +111,75 @@ public class Manager {
         }
     }
 
-    public void drawMaze() {
-        // Create a black rectangle to serve as the background
-        Rectangle background = new Rectangle(0, 0,1225, 600);
-        background.setFill(Color.BLACK);
 
-        root.getChildren().add(background);
+    public void setPlayerName(String playerName) {
+        // Check if playerName is empty or null, and set it to "N/A" if it is
+        if (playerName == null || playerName.trim().isEmpty()) {
+            playerName = "N/A";  // Use 'this' keyword to refer to the member variable
+        }
+        System.out.println("Received player name: " + playerName);
+        this.name = playerName;
+    }
+
+    public static String getName() {
+        return name;
+    }
+
+    private void saveScoreToCSV(String playerName, int playerScore) {
+        File csvFile = new File("player_scores.csv");
+        List<String[]> records = new ArrayList<>();
+
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+
+        try {
+            // Check if the file exists. If not, create it and add the header
+            if (!csvFile.exists()) {
+                csvFile.createNewFile();
+                try (FileWriter csvWriter = new FileWriter(csvFile)) {
+                    csvWriter.append("PlayerName,PlayerScore,Recorded\n");
+                    csvWriter.append(playerName).append(",").append(Integer.toString(playerScore)).append(",").append(timeStamp).append("\n");
+                }
+            } else {
+                // File already exists, just append to it
+                try (FileWriter csvWriter = new FileWriter(csvFile, true)) {
+                    csvWriter.append(playerName).append(",").append(Integer.toString(playerScore)).append(",").append(timeStamp).append("\n");
+                }
+            }
+
+            // Read all existing records
+            try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+                String line;
+                // Skip the header line
+                br.readLine();
+                while ((line = br.readLine()) != null) {
+                    records.add(line.split(","));
+                }
+            }
+
+            // Sort records based on scores in descending order
+            records.sort((a, b) -> Integer.compare(Integer.parseInt(b[1]), Integer.parseInt(a[1])));
+
+            // Write the sorted list back to the file
+            try (FileWriter csvWriter = new FileWriter(csvFile)) {
+                csvWriter.append("PlayerName,PlayerScore\n");
+                for (String[] record : records) {
+                    csvWriter.append(String.join(",", record)).append("\n");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void drawMaze() {
+        // Create a BackgroundImage
+        Image backgroundImage = new Image(getClass().getResource("/example/MainMenuBackground.jpg").toExternalForm(), 1225, 600, false, true);
+        ImagePattern imagePattern = new ImagePattern(backgroundImage);
+
+        Rectangle rect = new Rectangle(0, 0, 1225, 600);
+        rect.setFill(imagePattern);
+
+        root.getChildren().add(0, rect);
+
         this.maze.createMaze(root);
         // 1st line
         Integer skip[] = {5, 17};
@@ -211,7 +291,7 @@ public class Manager {
         this.ghosts.add(new Ghost(22.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.GREEN, maze, this));
         this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.HOTPINK, maze, this));
         this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 9.5 * Obstacle.THICKNESS, Color.PURPLE, maze, this));
-        this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 9.5 * Obstacle.THICKNESS, Color.RED, maze, this));
+        this.ghosts.add(new Ghost(18.5 * Obstacle.THICKNESS, 9.5 * Obstacle.THICKNESS, Color.RED, maze, this));
     }
 
     public void movePacman(KeyEvent event) {
@@ -292,6 +372,9 @@ public class Manager {
     }
 
     private void checkCookieCollision(Pacman pacman, String axis) {
+        if (gameEnded) {
+            return; // Don't proceed if the game is already over
+        }
         double pacmanCenterY = pacman.getCenterY();
         double pacmanCenterX = pacman.getCenterX();
         double pacmanLeftEdge = pacmanCenterX - pacman.getRadius();
@@ -342,7 +425,9 @@ public class Manager {
             }
             this.scoreBoard.updateScore(this.score);
             if (this.cookiesEaten == this.cookieSet.size()) {
-                this.gameOver();
+                if (!gameEnded) {
+                    this.gameOver();
+                }
             }
         }
     }

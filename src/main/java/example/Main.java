@@ -26,7 +26,7 @@ public class Main {
         Canvas canvas = new Canvas(1225, 600);
         root.getChildren().add(canvas);
 
-        Manager gameManager = new Manager(root);
+        Manager gameManager = new Manager(root, gameStage);
         gameManager.drawMaze();
 
         // Assign event handlers for key presses and releases

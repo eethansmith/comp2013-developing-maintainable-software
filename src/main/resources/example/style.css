@@ -1,0 +1,49 @@
+.header-label {
+    -fx-font-family: "Avenir Next Bold";
+    -fx-font-size: 45px;
+    -fx-fill: gold;
+    -fx-stroke: black;
+    -fx-stroke-width: 4;
+}
+
+#yourScoreText {
+    -fx-font-family: "Avenir Next Bold";
+    -fx-font-size: 37.5px;
+    -fx-fill: red;
+    -fx-stroke: black;
+    -fx-stroke-width: 2.5;
+}
+
+.score-label {
+    -fx-font-family: "Silom";
+    -fx-font-size: 28px;
+    -fx-text-fill: white;
+}
+
+#spacerLabel {
+    -fx-pref-height: 20px;
+}
+
+.styled-button {
+    -fx-background-color: rgba(255, 255, 255, 0);
+    -fx-pref-width: 305;
+    -fx-pref-height: 74;
+    -fx-opacity: 0.8;
+}
+
+.button-label {
+    -fx-font-family: "Arial Black";
+    -fx-font-size: 35px;
+    -fx-text-fill: white;
+}
+
+.score-box {
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}
+
+.na-label {
+    -fx-font-family: "Silom";
+    -fx-font-size: 30px;
+    -fx-text-fill: black;
+}

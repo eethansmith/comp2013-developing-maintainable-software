@@ -1,6 +1,8 @@
 package example;
 
 import javafx.event.ActionEvent;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.KeyEvent;
@@ -8,12 +10,19 @@ import javafx.stage.Stage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
+import javafx.scene.Node;
 import javafx.fxml.FXML;
 
 public class Controller {
 
+    private Stage gameStage;
+    Group root = new Group();
+
     @FXML
     private Button playButton;
+
+    @FXML
+    private Button levelSelectButton;
 
     @FXML
     private TextField playerNameInput;
@@ -38,13 +47,19 @@ public class Controller {
 
     @FXML
     private void switchToGame(ActionEvent event) {
+        String playerName = playerNameInput.getText();
+        Manager manager = new Manager(root, gameStage);
+        manager.setPlayerName(playerName);
         Stage currentStage = (Stage) playButton.getScene().getWindow();
         MainFX.launchGame(currentStage);
         System.out.println("Prepare to enter the game...");
     }
 
-    public void selectLevel(MouseEvent mouseEvent) {
-        System.out.println("Level Select Clicked *Click*...");
+    @FXML
+    public void selectLevel(ActionEvent event) {
+        Stage currentStage = (Stage) levelSelectButton.getScene().getWindow();
+        MainFX.launchLevelSelector(currentStage);
+        System.out.println("Select the level difficulty you would like...");
     }
 
     public void filterInput(KeyEvent keyEvent) {
@@ -60,6 +75,13 @@ public class Controller {
         if (source.getText().length() >= 4) {
             keyEvent.consume();
         }
+    }
+
+    //when option chosen in LevelSelect takes user back to the main menu with the option returned.
+    @FXML
+    public void switchToMenu(MouseEvent event) {
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        MainFX.launchMainMenu(currentStage);
     }
 
 }
