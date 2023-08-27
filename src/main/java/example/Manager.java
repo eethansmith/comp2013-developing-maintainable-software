@@ -3,9 +3,11 @@ package example;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.scene.Group;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.text.Font;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -169,11 +171,15 @@ public class Manager {
         }
     }
     public void drawMaze() {
-        // Create a black rectangle to serve as the background
-        Rectangle background = new Rectangle(0, 0,1225, 600);
-        background.setFill(Color.BLACK);
+        // Create a BackgroundImage
+        Image backgroundImage = new Image(getClass().getResource("/example/MainMenuBackground.jpg").toExternalForm(), 1225, 600, false, true);
+        ImagePattern imagePattern = new ImagePattern(backgroundImage);
 
-        root.getChildren().add(background);
+        Rectangle rect = new Rectangle(0, 0, 1225, 600);
+        rect.setFill(imagePattern);
+
+        root.getChildren().add(0, rect);
+
         this.maze.createMaze(root);
         // 1st line
         Integer skip[] = {5, 17};
@@ -285,7 +291,7 @@ public class Manager {
         this.ghosts.add(new Ghost(22.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.GREEN, maze, this));
         this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 12.5 * Obstacle.THICKNESS, Color.HOTPINK, maze, this));
         this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 9.5 * Obstacle.THICKNESS, Color.PURPLE, maze, this));
-        this.ghosts.add(new Ghost(28.5 * Obstacle.THICKNESS, 9.5 * Obstacle.THICKNESS, Color.RED, maze, this));
+        this.ghosts.add(new Ghost(18.5 * Obstacle.THICKNESS, 9.5 * Obstacle.THICKNESS, Color.RED, maze, this));
     }
 
     public void movePacman(KeyEvent event) {
