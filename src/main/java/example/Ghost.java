@@ -1,10 +1,14 @@
 package example;
 
 import javafx.animation.AnimationTimer;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
-
+import javafx.scene.transform.Scale;
 import java.util.Random;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
+import javafx.scene.image.PixelWriter;
 
 /**
  * example.Ghost class represents a ghost character in a example.Pacman game.
@@ -37,16 +41,29 @@ public class Ghost extends Rectangle implements Runnable {
      */
     int timesWalked;
 
+    private Scale scale;
+
+    private Image normalImage;
+    private Image flippedImage;
+    private ImagePattern imagePattern;
+    private Pacman pacman;
+
+    private Image blueImage;
+    private boolean powerUpActive;
+    private double initialX;
+    private double initialY;
+
     /**
-     * example.Ghost constructor. Initialises a example.Ghost instance with given parameters.
+     * Ghost constructor. Initializes a Ghost instance with given parameters.
      *
-     * @param x x-coordinate of the example.Ghost's position
-     * @param y y-coordinate of the example.Ghost's position
-     * @param color Color of the example.Ghost
-     * @param maze Reference to the example.Maze
-     * @param manager Reference to the example.Manager
+     * @param x x-coordinate of the Ghost's position
+     * @param y y-coordinate of the Ghost's position
+     * @param imagePath Path of the image to be used for the Ghost
+     * @param maze Reference to the Maze
+     * @param manager Reference to the Manager
      */
-    public Ghost(double x, double y, Color color, Maze maze, Manager manager) {
+    public Ghost(double x, double y, String imagePath, Maze maze, Manager manager, Pacman pacman) {
+        super(x, y);
         // Set the x-coordinate of the example.Ghost
         this.setX(x);
         // Set the y-coordinate of the example.Ghost
@@ -55,18 +72,52 @@ public class Ghost extends Rectangle implements Runnable {
         this.maze = maze;
         // Assign the example.Manager object
         this.manager = manager;
+        // Initialize the Scale object
+        this.scale = new Scale(1, 1);
+        // Add the scale transform to the Ghost
+        this.getTransforms().add(scale);
         // Set the height of the example.Ghost
         this.setHeight(50);
         // Set the width of the example.Ghost
         this.setWidth(50);
-        // Set the color of the example.Ghost
-        this.setFill(color);
+        this.normalImage = new Image(getClass().getResource(imagePath).toExternalForm());
+        this.setFill(imagePattern);
         // Initialize the step counter to 0
         this.timesWalked = 0;
         // Set initial moving direction to down
         this.direction = "down";
+        this.pacman = pacman;
         // Create the movement animation for the example.Ghost
         this.createAnimation();
+        this.imagePattern = new ImagePattern(this.normalImage);  // Initialize imagePattern
+        this.setFill(this.imagePattern);
+        this.blueImage = new Image(getClass().getResource("Ghost-Blue.png").toExternalForm());
+        boolean powerUpActive;
+
+        this.initialX = x;
+        this.initialY = y;
+
+
+// Create the flipped image
+        PixelReader reader = normalImage.getPixelReader();
+        WritableImage newImage = new WritableImage((int) normalImage.getWidth(), (int) normalImage.getHeight());
+        PixelWriter writer = newImage.getPixelWriter();
+        for (int pixelY = 0; pixelY < normalImage.getHeight(); pixelY++) {
+            for (int pixelX = 0; pixelX < normalImage.getWidth(); pixelX++) {
+                writer.setColor((int) (normalImage.getWidth() - pixelX - 1), pixelY, reader.getColor(pixelX, pixelY));
+            }
+        }
+        this.flippedImage = newImage;
+        // Set the initial image to the normal image.
+        this.setFill(new ImagePattern(normalImage));
+    }
+
+    public void setPowerUpActive(boolean isActive) {
+        this.powerUpActive = isActive;
+    }
+
+    public void setPacman(Pacman pacman) {
+        this.pacman = pacman;
     }
 
     /**
@@ -226,11 +277,16 @@ public class Ghost extends Rectangle implements Runnable {
      * Creates an animation for the example.Ghost's movement.
      */
     public void createAnimation() {
-        this.animation = new AnimationTimer()
-        {
-            public void handle(long currentNanoTime)
-            {
-                manager.checkGhostCollision();
+        this.animation = new AnimationTimer() {
+            public void handle(long currentNanoTime) {
+                if (pacman != null) {  // Check if pacman is not null
+                    pacman.checkGhostCollision();
+                }
+                if (powerUpActive) {
+                    setFill(new ImagePattern(blueImage));
+                } else {
+                    setFill(direction.equals("left") ? new ImagePattern(flippedImage) : new ImagePattern(normalImage));
+                }
                 double leftEdge = getX();
                 double topEdge = getY();
                 double rightEdge = getX() + getWidth();
@@ -241,6 +297,7 @@ public class Ghost extends Rectangle implements Runnable {
                 switch (direction) {
                     case "left":
                         moveUntilYouCant("left", "down", leftEdge, topEdge, rightEdge, bottomEdge, padding);
+                        setFill(new ImagePattern(flippedImage));
                         if (timesWalked > walkAtLeast) {
                             checkIfTheresPathToGo(getRandomDirection("left", "right"));
                             timesWalked = 0;
@@ -248,6 +305,7 @@ public class Ghost extends Rectangle implements Runnable {
                         break;
                     case "right":
                         moveUntilYouCant("right", "up", leftEdge, topEdge, rightEdge, bottomEdge, padding);
+                        setFill(new ImagePattern(normalImage));
                         if (timesWalked > walkAtLeast) {
                             checkIfTheresPathToGo(getRandomDirection("left", "right"));
                             timesWalked = 0;
@@ -270,6 +328,24 @@ public class Ghost extends Rectangle implements Runnable {
                 }
             }
         };
+    }
+    public double getInitialX() {
+        return initialX;
+    }
+
+    // Setter for initialX (optional)
+    public void setInitialX(double initialX) {
+        this.initialX = initialX;
+    }
+
+    // Getter for initialY
+    public double getInitialY() {
+        return initialY;
+    }
+
+    // Setter for initialY (optional)
+    public void setInitialY(double initialY) {
+        this.initialY = initialY;
     }
 
     /**
