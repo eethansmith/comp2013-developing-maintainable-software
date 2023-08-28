@@ -2,7 +2,6 @@ package example;
 
 import javafx.event.ActionEvent;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.KeyEvent;
@@ -13,7 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.Node;
 import javafx.fxml.FXML;
 
-public class Controller {
+public class MenuController {
 
     private Stage gameStage;
     Group root = new Group();
@@ -75,13 +74,6 @@ public class Controller {
         if (source.getText().length() >= 4) {
             keyEvent.consume();
         }
-    }
-
-    //when option chosen in LevelSelect takes user back to the main menu with the option returned.
-    @FXML
-    public void switchToMenu(MouseEvent event) {
-        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        MainFX.launchMainMenu(currentStage);
     }
 
 }
