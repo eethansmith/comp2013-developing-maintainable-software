@@ -8,11 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -23,8 +18,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A JavaFX Application class responsible for displaying the scoreboard screen.
+ */
 public class ScoreboardScreen extends Application {
 
+    /**
+     * Entry point for the JavaFX application.
+     *
+     * @param primaryStage The primary stage of the JavaFX application.
+     */
     @Override
     public void start(Stage primaryStage) {
         BorderPane root = new BorderPane();
@@ -32,22 +35,22 @@ public class ScoreboardScreen extends Application {
         scoreBox.setAlignment(Pos.CENTER);
         scoreBox.setSpacing(10);  // Reduced spacing between elements
 
-        // Display high scores and fill the VBox
+        // Populate the scoreBox with high scores
         displayHighScores(scoreBox);
 
-        // Background setup
+        // Background image setup
         Image backgroundImage = new Image(getClass().getResource("/example/MainMenuBackground.jpg").toExternalForm(), 1000, 600, false, true);
         root.setBackground(new Background(new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
 
+        // Set the scoreBox in the center of the root layout
         root.setCenter(scoreBox);
 
+        // Create menu and exit buttons
         Label MenuLabel = new Label("MENU");
         MenuLabel.getStyleClass().add("button-label");
-
         Button MenuButton = new Button();
         MenuButton.setGraphic(MenuLabel);
         MenuButton.getStyleClass().add("styled-button");
-
         MenuButton.setOnAction(e -> {
             primaryStage.close();
             Platform.runLater(() -> MainFX.launchMainMenu(new Stage()));
@@ -57,7 +60,7 @@ public class ScoreboardScreen extends Application {
         Label ExitLabel = new Label("EXIT GAME");
         ExitLabel.getStyleClass().add("button-label");
 
-// Create a Button and set the label as its graphic content
+        // Create a Button and set the label as its graphic content
         Button ExitButton = new Button();
         ExitButton.setGraphic(ExitLabel);
         ExitButton.getStyleClass().add("styled-button");
@@ -69,22 +72,31 @@ public class ScoreboardScreen extends Application {
         vbox.setSpacing(3);
         vbox.getChildren().addAll(MenuLabel, ExitLabel, MenuButton, ExitButton);
 
+        // Add buttons to the bottom of the root layout
         root.setBottom(vbox);
 
+        // Final stage and scene setup
         Scene scene = new Scene(root, 1000, 600);
         primaryStage.setTitle("Scoreboard Screen");
         primaryStage.setScene(scene);
         primaryStage.show();
         scene.getStylesheets().add(getClass().getResource("/example/styles.css").toExternalForm());
     }
+
+    /**
+     * Displays high scores on the scoreboard screen.
+     *
+     * @param scoreBox The VBox where the high scores are to be displayed.
+     */
     public void displayHighScores(VBox scoreBox) {
         // Your code for reading the file and filling the scoreBox
         File csvFile = new File("player_scores.csv");
         List<String[]> records = new ArrayList<>();
 
         try {
-            // Read all existing records
+            // Read records from file
             try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+                // Sort records
                 String line;
                 // Skip the header line
                 br.readLine();
@@ -93,7 +105,7 @@ public class ScoreboardScreen extends Application {
                 }
             }
 
-            // Sort records based on scores in descending order
+            // Get the most recent record
             records.sort((a, b) -> Integer.compare(Integer.parseInt(b[1]), Integer.parseInt(a[1])));
 
             // Sort records based on timestamp to find the most recent
@@ -144,7 +156,7 @@ public class ScoreboardScreen extends Application {
                 scoreBox.getChildren().add(scoreLabel);
             } else {
                 Label scoreLabel = new Label("N/A");
-                scoreLabel.getStyleClass().add("na-label");
+                scoreLabel.getStyleClass().add("score-label");
                 scoreBox.getChildren().add(scoreLabel);
             }
 
@@ -153,6 +165,11 @@ public class ScoreboardScreen extends Application {
         }
     }
 
+    /**
+     * The main method to launch the JavaFX application.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         launch(args);
     }

@@ -5,18 +5,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The example.Maze class represents the layout of the maze in the example.Pacman game.
- * It stores a set of example.Obstacle objects which make up the structure of the maze.
+ * The Maze class represents the layout of the maze in the Pacman game.
+ * It stores a set of Obstacle objects which make up the structure of the maze.
  */
 public class Maze {
-    /**
-     * Set of example.Obstacle objects that make up the maze.
-     */
+    // Set of Obstacle objects that make up the maze.
     private Set<Obstacle> obstacles;
+
+    // Manager object for game management functionalities like difficulty level.
     private Manager manager;
 
     /**
-     * Constructor for the example.Maze class. Initializes an empty set of example.Obstacle objects.
+     * Constructor for the Maze class. Initializes an empty set of Obstacle objects.
+     * @param manager Manager object for game management.
      */
     public Maze(Manager manager) {
         obstacles = new HashSet<>();
@@ -24,16 +25,17 @@ public class Maze {
     }
 
     /**
-     * Checks if a point defined by the x and y coordinates is touching an example.Obstacle,
+     * Checks if a point defined by the x and y coordinates is touching an Obstacle,
      * given a certain collision buffer.
      *
-     * @param x               the x coordinate of the point.
-     * @param y               the y coordinate of the point.
+     * @param x the x coordinate of the point.
+     * @param y the y coordinate of the point.
      * @param collisionBuffer the collision buffer around the obstacle.
      * @return true if the point is touching an obstacle, false otherwise.
      */
     public boolean isTouching(double x, double y, double collisionBuffer) {
         for (Obstacle obstacle : obstacles) {
+            // Check collision based on buffer and obstacle's position and dimensions.
             if (x >= obstacle.getX() - collisionBuffer &&
                     x <= obstacle.getX() + collisionBuffer + obstacle.getWidth() &&
                     y >= obstacle.getY() - collisionBuffer &&
@@ -48,12 +50,13 @@ public class Maze {
      * Checks if there is an obstacle within a specified rectangle in the maze.
      *
      * @param fromX the starting x coordinate of the rectangle.
-     * @param toX   the ending x coordinate of the rectangle.
+     * @param toX the ending x coordinate of the rectangle.
      * @param fromY the starting y coordinate of the rectangle.
-     * @param toY   the ending y coordinate of the rectangle.
+     * @param toY the ending y coordinate of the rectangle.
      * @return true if there is an obstacle within the rectangle, false otherwise.
      */
     public boolean hasObstacle(double fromX, double toX, double fromY, double toY) {
+        // Iterate through the rectangle coordinates to check for any obstacles.
         for (double i = fromX; i < toX; i++) {
             for (double j = fromY; j < toY; j++) {
                 if (this.isTouching(i, j, 0)) return true;
@@ -63,15 +66,18 @@ public class Maze {
     }
 
     /**
-     * Creates the layout of the maze and adds the example.Obstacle objects to the specified Group root.
+     * Creates the layout of the maze and adds the Obstacle objects to the specified Group root.
      *
-     * @param root the Group object where the example.Obstacle objects are added.
+     * @param root the Group object where the Obstacle objects are added.
      */
     public void createMaze(Group root) {
-        String difficulty = manager.getLevel();
+        // Create the outer frame of the maze.
         createFrame();
 
-        if (difficulty != null) {  // Add this null check
+        String difficulty = manager.getLevel();  // Fetch the difficulty level from manager.
+
+        // Check for null and then create islands based on difficulty level.
+        if (difficulty != null) {
             if (difficulty.equals("hard")) {
                 createIslandsHard();
             } else if (difficulty.equals("normal")) {
@@ -79,26 +85,26 @@ public class Maze {
             }
         }
 
+        // Create enclosed areas called cages.
         createCages();
+
+        // Add all obstacles to the Group.
         root.getChildren().addAll(obstacles);
     }
 
     /**
-     * Creates the frame of the maze by adding example.Obstacle objects to the edges of the maze.
+     * Creates the frame of the maze by adding Obstacle objects to the edges of the maze.
      */
     private void createFrame() {
-        // Top
-        this.obstacles.add(new Obstacle(0, 0, "horizontal", 48));
-        // Bottom
-        this.obstacles.add(new Obstacle(0, 600, "horizontal", 48));
-        // Left
-        this.obstacles.add(new Obstacle(0, 0, "vertical", 25));
-        // Right
-        this.obstacles.add(new Obstacle(1225 - Obstacle.THICKNESS, 0, "vertical", 25));
+        // Create top, bottom, left, and right edges of the maze.
+        obstacles.add(new Obstacle(0, 0, "horizontal", 48));
+        obstacles.add(new Obstacle(0, 600, "horizontal", 48));
+        obstacles.add(new Obstacle(0, 0, "vertical", 25));
+        obstacles.add(new Obstacle(1225 - Obstacle.THICKNESS, 0, "vertical", 25));
     }
 
     /**
-     * Creates "islands" or clusters of obstacles within the maze.
+     * Creates "islands" or clusters of obstacles within the maze for normal difficulty.
      */
     private void createIslandsNormal() {
         // ObsTopLeft
@@ -159,6 +165,9 @@ public class Maze {
         this.obstacles.add(new Obstacle(27 * Obstacle.THICKNESS, 8 * Obstacle.THICKNESS, "horizontal", 5));
     }
 
+    /**
+     * Creates "islands" or clusters of obstacles within the maze for hard difficulty.
+     */
     private void createIslandsHard() {
         // ObsTopLeft
         this.obstacles.add(new Obstacle(12 * Obstacle.THICKNESS, Obstacle.THICKNESS, "vertical", 7)); //TICK

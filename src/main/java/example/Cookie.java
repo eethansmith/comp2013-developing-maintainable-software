@@ -4,24 +4,23 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 /**
- * Represents a example.Cookie (or score) in the PACMAN game
- * when the PACMAN goes over the cookie, the player receives a score
+ * The Cookie class represents a cookie (or score) in the PACMAN game.
+ * It extends the Circle class to inherit graphical properties.
+ * When PACMAN collides with a cookie, the player's score is incremented.
  */
 public class Cookie extends Circle {
 
-    /**
-     * The point value of this example.Cookie.
-     */
+    /** The point value associated with collecting this cookie. */
     private final int value;
 
     /**
-     * Creates a new example.Cookie at the specified coordinates.
+     * Constructs a new Cookie at the specified x and y coordinates.
      *
-     * @param x the x-coordinate of the center of the cookie
-     * @param y the y-coordinate of the center of the cookie
+     * @param x The x-coordinate for the center of the cookie.
+     * @param y The y-coordinate for the center of the cookie.
      */
     public Cookie(double x, double y) {
-        this.value = 5;
+        this.value = 5;  // Initializing point value for this cookie
         this.setCenterX(x);
         this.setCenterY(y);
         this.setRadius(12.5);
@@ -29,26 +28,25 @@ public class Cookie extends Circle {
     }
 
     /**
-     * Gets the point value of this example.Cookie.
+     * Returns the point value associated with this cookie.
      *
-     * @return the point value of this example.Cookie
+     * @return The point value of this cookie.
      */
     public int getValue() {
         return value;
     }
 
     /**
-     * Hides the example.Cookie.
+     * Sets the visibility of this cookie to false, effectively "hiding" it.
      */
     public void hide() {
         this.setVisible(false);
     }
 
     /**
-     * Shows the example.Cookie.
+     * Sets the visibility of this cookie to true, effectively "showing" it.
      */
     public void show() {
         this.setVisible(true);
     }
-
 }
