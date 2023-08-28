@@ -15,15 +15,19 @@ public class Obstacle extends Rectangle {
      */
     public static double THICKNESS = 25;
 
+    private Manager manager;
+
     /**
      * Constructor for example.Obstacle class, sets the position, dimensions, and visual properties of the obstacle.
      *
-     * @param x          The x-coordinate of the obstacle's position.
-     * @param y          The y-coordinate of the obstacle's position.
+     * @param x           The x-coordinate of the obstacle's position.
+     * @param y           The y-coordinate of the obstacle's position.
      * @param orientation The orientation of the obstacle. Could be "horizontal" or "vertical".
-     * @param length     The length of the obstacle, the unit is the thickness of the obstacle.
+     * @param length      The length of the obstacle, the unit is the thickness of the obstacle.
      */
     public Obstacle(double x, double y, String orientation, double length) {
+        this.manager = manager;
+        String difficulty = manager.getLevel();
         // Set x-coordinate of obstacle's position
         this.setX(x);
 
@@ -42,10 +46,19 @@ public class Obstacle extends Rectangle {
             this.setWidth(Obstacle.THICKNESS);
         }
 
-        // Set fill color of the obstacle to BLUE
-        this.setFill(Color.BLUE);
-
         // Set stroke width of the obstacle
         this.setStrokeWidth(3);
+
+        if (difficulty != null) {  // Add this null check
+            if (difficulty.equals("hard")) {
+                // Set fill color of the obstacle to BLUE
+                this.setFill(Color.DARKRED);
+            } else if (difficulty.equals("normal")) {
+                this.setFill(Color.BLUE);
+            }
+        } else {
+            // default behavior if difficulty is null
+            this.setFill(Color.BLUE);
+        }
     }
 }
