@@ -33,6 +33,7 @@ public class Main {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, gameManager::movePacman);
         scene.addEventHandler(KeyEvent.KEY_RELEASED, gameManager::stopPacman);
         scene.addEventHandler(KeyEvent.KEY_PRESSED, gameManager::restartGame);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, gameManager::togglePowerUp);
 
         gameStage.show();
     }
