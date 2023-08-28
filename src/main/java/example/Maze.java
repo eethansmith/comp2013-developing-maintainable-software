@@ -13,20 +13,22 @@ public class Maze {
      * Set of example.Obstacle objects that make up the maze.
      */
     private Set<Obstacle> obstacles;
+    private Manager manager;
 
     /**
      * Constructor for the example.Maze class. Initializes an empty set of example.Obstacle objects.
      */
-    public Maze() {
+    public Maze(Manager manager) {
         obstacles = new HashSet<>();
+        this.manager = manager;
     }
 
     /**
      * Checks if a point defined by the x and y coordinates is touching an example.Obstacle,
      * given a certain collision buffer.
      *
-     * @param x the x coordinate of the point.
-     * @param y the y coordinate of the point.
+     * @param x               the x coordinate of the point.
+     * @param y               the y coordinate of the point.
      * @param collisionBuffer the collision buffer around the obstacle.
      * @return true if the point is touching an obstacle, false otherwise.
      */
@@ -35,8 +37,7 @@ public class Maze {
             if (x >= obstacle.getX() - collisionBuffer &&
                     x <= obstacle.getX() + collisionBuffer + obstacle.getWidth() &&
                     y >= obstacle.getY() - collisionBuffer &&
-                    y <= obstacle.getY() + collisionBuffer + obstacle.getHeight())
-            {
+                    y <= obstacle.getY() + collisionBuffer + obstacle.getHeight()) {
                 return true;
             }
         }
@@ -47,9 +48,9 @@ public class Maze {
      * Checks if there is an obstacle within a specified rectangle in the maze.
      *
      * @param fromX the starting x coordinate of the rectangle.
-     * @param toX the ending x coordinate of the rectangle.
+     * @param toX   the ending x coordinate of the rectangle.
      * @param fromY the starting y coordinate of the rectangle.
-     * @param toY the ending y coordinate of the rectangle.
+     * @param toY   the ending y coordinate of the rectangle.
      * @return true if there is an obstacle within the rectangle, false otherwise.
      */
     public boolean hasObstacle(double fromX, double toX, double fromY, double toY) {
@@ -67,8 +68,17 @@ public class Maze {
      * @param root the Group object where the example.Obstacle objects are added.
      */
     public void createMaze(Group root) {
+        String difficulty = manager.getLevel();
         createFrame();
-        createIslands();
+
+        if (difficulty != null) {  // Add this null check
+            if (difficulty.equals("hard")) {
+                createIslandsHard();
+            } else if (difficulty.equals("normal")) {
+                createIslandsNormal();
+            }
+        }
+
         createCages();
         root.getChildren().addAll(obstacles);
     }
@@ -90,7 +100,7 @@ public class Maze {
     /**
      * Creates "islands" or clusters of obstacles within the maze.
      */
-    private void createIslands() {
+    private void createIslandsNormal() {
         // ObsTopLeft
         this.obstacles.add(new Obstacle(12 * Obstacle.THICKNESS, Obstacle.THICKNESS, "vertical", 4));
         // obsTopRight
@@ -148,5 +158,43 @@ public class Maze {
         // cateLeftH
         this.obstacles.add(new Obstacle(27 * Obstacle.THICKNESS, 8 * Obstacle.THICKNESS, "horizontal", 5));
     }
-}
 
+    private void createIslandsHard() {
+        // ObsTopLeft
+        this.obstacles.add(new Obstacle(12 * Obstacle.THICKNESS, Obstacle.THICKNESS, "vertical", 7)); //TICK
+        // obsTopRight
+        this.obstacles.add(new Obstacle(36 * Obstacle.THICKNESS, Obstacle.THICKNESS, "vertical", 7)); //TICK
+        // obsBottomLeft
+        this.obstacles.add(new Obstacle(12 * Obstacle.THICKNESS, 600 - 8 * Obstacle.THICKNESS, "vertical", 8));
+        // obsBottomRight
+        this.obstacles.add(new Obstacle(36 * Obstacle.THICKNESS, 600 - 8 * Obstacle.THICKNESS, "vertical", 8));
+        // obsTopMiddle
+        this.obstacles.add(new Obstacle(16 * Obstacle.THICKNESS, 4 * Obstacle.THICKNESS, "horizontal", 17)); //TICK
+        // obsBottomMiddle
+        this.obstacles.add(new Obstacle(16 * Obstacle.THICKNESS, 600 - 4 * Obstacle.THICKNESS, "horizontal", 17)); //TICK
+        // obsLMTop
+        this.obstacles.add(new Obstacle(8 * Obstacle.THICKNESS, 8 * Obstacle.THICKNESS, "horizontal", 5));
+        // obsLMTop4
+        this.obstacles.add(new Obstacle(8 * Obstacle.THICKNESS, 12 * Obstacle.THICKNESS, "horizontal", 5));
+        // obsLMBottom
+        this.obstacles.add(new Obstacle(8 * Obstacle.THICKNESS, 16 * Obstacle.THICKNESS, "horizontal", 5));
+        // obsRMTop
+        this.obstacles.add(new Obstacle(36 * Obstacle.THICKNESS, 8 * Obstacle.THICKNESS, "horizontal", 5));
+        // obsRMTop2
+        this.obstacles.add(new Obstacle(36 * Obstacle.THICKNESS, 12 * Obstacle.THICKNESS, "horizontal", 5));
+        // obsRMBottom
+        this.obstacles.add(new Obstacle(36 * Obstacle.THICKNESS, 16 * Obstacle.THICKNESS, "horizontal", 5));
+        // LobsLeftTop1
+        this.obstacles.add(new Obstacle(4 * Obstacle.THICKNESS, 4 * Obstacle.THICKNESS, "horizontal", 5));
+        // LobsLeftTop2
+        this.obstacles.add(new Obstacle(4 * Obstacle.THICKNESS, 5 * Obstacle.THICKNESS, "vertical", 15));
+        // LobsLeftBottom1
+        this.obstacles.add(new Obstacle(4 * Obstacle.THICKNESS, 600 - 4 * Obstacle.THICKNESS, "horizontal", 5));
+        // LobsRightTop1
+        this.obstacles.add(new Obstacle(40 * Obstacle.THICKNESS, 4 * Obstacle.THICKNESS, "horizontal", 5)); //TICK
+        // LobsRightTop2
+        this.obstacles.add(new Obstacle(44 * Obstacle.THICKNESS, 5 * Obstacle.THICKNESS, "vertical", 15));
+        // LobsRightBottom1
+        this.obstacles.add(new Obstacle(40 * Obstacle.THICKNESS, 600 - 4 * Obstacle.THICKNESS, "horizontal", 5)); //TICK
+    }
+}
